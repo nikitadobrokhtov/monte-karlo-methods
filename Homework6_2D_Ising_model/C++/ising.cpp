@@ -2,10 +2,19 @@
 #include <vector>
 #include <cmath>
 #include <chrono>
-#include <sstream>
+#include <fstream>
 #include <string>
 
 using namespace std;
+
+
+void writeCSV(const string& path, const vector<int>& energies){
+	ofstream output(path);
+
+	for(const auto& line  : energies){
+		output << line << endl;
+	}
+}
 
 void print_lattice(const vector<vector<int>>& lattice){
 	int len = lattice.size();
@@ -51,7 +60,7 @@ int deltaE(int S0, int Sn, int J, int H){
 }
 
 
-vector<int> ising(int n, unsigned long long nsteps, int H, int J, int T){
+vector<int> ising(int n, unsigned long long nsteps, int H, int J, double T){
 	vector<vector<int>> lattice = init_lattice(n);
 	int energy = 0;
 	vector<int> energies;
@@ -90,15 +99,20 @@ int main(){
 	//n, nsteps, H, J, T - arguments for ising
 
 	//auto t1 = chrono::high_resolution_clock::now(); 
-	vector<int> energies = ising(1000, 1000000000, 0, 1, 1);
+	//vector<int> energies = ising(1000, 10000000, 0, 1, 1);
 	//auto t2 = chrono::high_resolution_clock::now();
 	//auto duration = chrono::duration_cast<chrono::seconds>( t2 - t1 ).count();
 	//cout << duration;
 
-	for(int i = 0; i < energies.size(); i++){
-		cout << energies[i] << endl;
+	//for(int i = 0; i < energies.size(); i++){
+	//	cout << energies[i] << endl;
+	//}
+	for(double T = 2.5; T <= 4.0; T+=0.003){
+		vector<int> energies = ising(1000, 100000000, 0, 1, T);
+		writeCSV("E_"+to_string(T)+".csv", energies);
 	}
-
+	
+	//writeCSV("energies1.0.csv", energies);
 
 
 
